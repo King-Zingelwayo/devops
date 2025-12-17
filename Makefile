@@ -21,6 +21,7 @@ up: ## Start all services
 	@echo "  📈 Prometheus: http://localhost:9090/targets"
 	@echo "  📋 Metrics: http://localhost:8081/metrics"
 	@echo "\nℹ️  Wait 30s for metrics to appear in Grafana"
+	
 
 down: ## Stop all services
 	docker compose down
