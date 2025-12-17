@@ -31,6 +31,10 @@ resource "cloudflare_record" "acm_validation" {
   ttl             = 60
   proxied         = false
   allow_overwrite = true
+
+  lifecycle {
+    replace_triggered_by = [aws_acm_certificate.main.domain_validation_options]
+  }
 }
 
 # ACM Certificate Validation
