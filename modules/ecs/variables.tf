@@ -33,6 +33,7 @@ variable "services" {
     memory      = optional(number, 512)
     environment = optional(map(string), {})
     expose_alb  = optional(bool, false)
+    host_header = optional(string, null)
   }))
   default = {}
 }
@@ -159,4 +160,9 @@ variable "enable_monitoring" {
     condition     = var.enable_monitoring.grafana == false || (var.enable_monitoring.grafana == true && var.enable_monitoring.grafana_config != null && length(var.enable_monitoring.grafana_config.dashboard_files) > 0)
     error_message = "When enable_monitoring.grafana is true, enable_monitoring.grafana_config.dashboard_files must be provided with at least one dashboard JSON file."
   }
+}
+
+variable "domain_name" {
+  description = "Domain name for host-based routing"
+  type        = string
 }

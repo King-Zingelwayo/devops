@@ -90,10 +90,10 @@ resource "aws_lb_listener" "https" {
 }
 
 resource "aws_lb_listener_rule" "services" {
-  for_each = { for k, v in var.services : k => v if v.expose_alb }
+  for_each = { for k, v in var.services : k => v if v.expose_alb && v.host_header != null }
 
   listener_arn = aws_lb_listener.https.arn
-  priority     = 50 + index(keys({ for k, v in var.services : k => v if v.expose_alb }), each.key)
+  priority     = 50 + index(keys({ for k, v in var.services : k => v if v.expose_alb && v.host_header != null }), each.key)
 
   action {
     type             = "forward"
@@ -101,8 +101,8 @@ resource "aws_lb_listener_rule" "services" {
   }
 
   condition {
-    path_pattern {
-      values = ["/*"]
+    host_header {
+      values = [each.value.host_header]
     }
   }
 }
@@ -156,12 +156,15 @@ resource "aws_security_group" "ecs_tasks" {
     }
   }
 
-  ingress {
-    description     = "Grafana from ALB"
-    from_port       = 3000
-    to_port         = 3000
-    protocol        = "tcp"
-    security_groups = [aws_security_group.alb.id]
+  dynamic "ingress" {
+    for_each = var.enable_monitoring.grafana ? [1] : []
+    content {
+      description     = "Grafana from ALB"
+      from_port       = 3000
+      to_port         = 3000
+      protocol        = "tcp"
+      security_groups = [aws_security_group.alb.id]
+    }
   }
 
   ingress {
@@ -292,13 +295,7 @@ resource "aws_ecs_task_definition" "services" {
         }
       }
 
-      healthCheck = {
-        command     = ["CMD-SHELL", "wget --quiet --tries=1 --spider http://localhost:${each.value.port}/health || exit 1"]
-        interval    = 30
-        timeout     = 20
-        retries     = 5
-        startPeriod = 180
-      }
+
     }
   ])
 

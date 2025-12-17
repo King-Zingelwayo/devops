@@ -33,6 +33,7 @@ module "ecs" {
         GAME_SERVICE_URL = "http://game-service.${var.environment}-${var.project_name}.local:8081"
       }
       expose_alb  = true
+      host_header = "sihle.${data.cloudflare_zone.this.name}"
     }
   }
 
@@ -51,6 +52,7 @@ module "ecs" {
     prometheus_config_file = "${path.module}/monitoring/prometheus.yml"
   }
   certificate_arn = aws_acm_certificate.main.arn
+  domain_name     = data.cloudflare_zone.this.name
 
   depends_on = [null_resource.build_and_push_images]
 }
