@@ -19,6 +19,7 @@ resource "aws_ecr_repository" "frontend_service" {
   }
 
   tags = var.tags
+  
 }
 
 # Build and push Docker images
