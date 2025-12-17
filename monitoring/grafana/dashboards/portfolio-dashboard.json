@@ -1,0 +1,63 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "Portfolio Game Metrics",
+    "tags": ["portfolio", "games"],
+    "timezone": "browser",
+    "refresh": "30s",
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    },
+    "panels": [
+      {
+        "id": 1,
+        "title": "Games Started",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "increase(wordle_games_started_total[5m])",
+            "legendFormat": "Games Started (5m)"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 6, "x": 0, "y": 0}
+      },
+      {
+        "id": 2,
+        "title": "Total Score",
+        "type": "stat", 
+        "targets": [
+          {
+            "expr": "increase(wordle_games_won_total[5m]) * 10",
+            "legendFormat": "Total Score"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 6, "x": 6, "y": 0}
+      },
+      {
+        "id": 3,
+        "title": "Player Actions",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "increase(wordle_guesses_total[5m])",
+            "legendFormat": "Actions (5m)"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 6, "x": 12, "y": 0}
+      },
+      {
+        "id": 4,
+        "title": "Invalid Moves",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "increase(wordle_invalid_guesses_total[5m])",
+            "legendFormat": "Invalid (5m)"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 6, "x": 18, "y": 0}
+      }
+    ]
+  }
+}
