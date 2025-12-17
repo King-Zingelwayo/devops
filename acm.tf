@@ -24,14 +24,17 @@ resource "cloudflare_record" "acm_validation" {
     }
   }
 
-  zone_id                   = var.cloudflare_zone_id
-  name                      = each.value.name
-  type                      = each.value.type
-  content                   = each.value.value
-  ttl                       = 60
-  proxied                   = false
-  allow_overwrite           = true
-  replace_existing_record_types = ["CNAME"]
+  zone_id         = var.cloudflare_zone_id
+  name            = each.value.name
+  type            = each.value.type
+  content         = each.value.value
+  ttl             = 60
+  proxied         = false
+  allow_overwrite = true
+
+  lifecycle {
+    replace_triggered_by = [aws_acm_certificate.main.domain_validation_options]
+  }
 }
 
 # ACM Certificate Validation
