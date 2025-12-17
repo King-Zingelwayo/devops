@@ -295,9 +295,9 @@ resource "aws_ecs_task_definition" "services" {
       healthCheck = {
         command     = ["CMD-SHELL", "wget --quiet --tries=1 --spider http://localhost:${each.value.port}/health || exit 1"]
         interval    = 30
-        timeout     = 5
-        retries     = 3
-        startPeriod = 60
+        timeout     = 20
+        retries     = 5
+        startPeriod = 180
       }
     }
   ])
