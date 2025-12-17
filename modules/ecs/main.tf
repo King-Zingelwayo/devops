@@ -58,8 +58,6 @@ resource "aws_lb_target_group" "services" {
 }
 
 resource "aws_lb_listener" "http" {
-  count = length([for k, v in var.services : k if v.expose_alb]) > 0 ? 1 : 0
-
   load_balancer_arn = aws_lb.main.arn
   port              = "80"
   protocol          = "HTTP"
@@ -75,7 +73,7 @@ resource "aws_lb_listener" "http" {
 }
 
 resource "aws_lb_listener" "https" {
-  count = var.certificate_arn != null && length([for k, v in var.services : k if v.expose_alb]) > 0 ? 1 : 0
+  count = var.certificate_arn != null ? 1 : 0
 
   load_balancer_arn = aws_lb.main.arn
   port              = "443"
@@ -84,8 +82,30 @@ resource "aws_lb_listener" "https" {
   certificate_arn   = var.certificate_arn
 
   default_action {
+    type = "fixed-response"
+    fixed_response {
+      content_type = "text/plain"
+      message_body = "Not Found"
+      status_code  = "404"
+    }
+  }
+}
+
+resource "aws_lb_listener_rule" "services" {
+  for_each = { for k, v in var.services : k => v if v.expose_alb }
+
+  listener_arn = aws_lb_listener.https[0].arn
+  priority     = 50 + index(keys({ for k, v in var.services : k => v if v.expose_alb }), each.key)
+
+  action {
     type             = "forward"
-    target_group_arn = values(aws_lb_target_group.services)[0].arn
+    target_group_arn = aws_lb_target_group.services[each.key].arn
+  }
+
+  condition {
+    path_pattern {
+      values = ["/*"]
+    }
   }
 }
 
