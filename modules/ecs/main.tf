@@ -73,8 +73,6 @@ resource "aws_lb_listener" "http" {
 }
 
 resource "aws_lb_listener" "https" {
-  count = var.certificate_arn != null ? 1 : 0
-
   load_balancer_arn = aws_lb.main.arn
   port              = "443"
   protocol          = "HTTPS"
@@ -94,7 +92,7 @@ resource "aws_lb_listener" "https" {
 resource "aws_lb_listener_rule" "services" {
   for_each = { for k, v in var.services : k => v if v.expose_alb }
 
-  listener_arn = aws_lb_listener.https[0].arn
+  listener_arn = aws_lb_listener.https.arn
   priority     = 50 + index(keys({ for k, v in var.services : k => v if v.expose_alb }), each.key)
 
   action {

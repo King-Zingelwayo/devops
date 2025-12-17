@@ -153,9 +153,9 @@ resource "aws_lb_target_group" "grafana" {
 
 # ALB Listener Rule for Grafana
 resource "aws_lb_listener_rule" "grafana" {
-  count = local.monitoring_enabled && var.certificate_arn != null && var.enable_monitoring.grafana_config.domain != null ? 1 : 0
+  count = local.monitoring_enabled && var.enable_monitoring.grafana_config.domain != null ? 1 : 0
 
-  listener_arn = aws_lb_listener.https[0].arn
+  listener_arn = aws_lb_listener.https.arn
   priority     = 100
 
   action {

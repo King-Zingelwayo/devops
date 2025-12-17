@@ -136,7 +136,6 @@ variable "kms_key_id" {
 variable "certificate_arn" {
   description = "ACM certificate ARN for HTTPS"
   type        = string
-  default     = null
 }
 
 variable "enable_monitoring" {
