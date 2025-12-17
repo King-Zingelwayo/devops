@@ -33,7 +33,7 @@ resource "aws_lb" "main" {
 resource "aws_lb_target_group" "services" {
   for_each = { for k, v in var.services : k => v if v.expose_alb }
 
-  name     = "${var.environment}-${var.project_name}-${each.key}-tg"
+  name     = "${var.environment}-${substr(each.key, 0, 20)}-tg"
   port     = each.value.port
   protocol = "HTTP"
   vpc_id   = var.vpc_id

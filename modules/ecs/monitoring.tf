@@ -127,7 +127,7 @@ resource "aws_ecs_task_definition" "monitoring" {
 resource "aws_lb_target_group" "grafana" {
   count = local.monitoring_enabled ? 1 : 0
 
-  name     = "${var.environment}-${var.project_name}-grafana-tg"
+  name     = "${var.environment}-grafana-tg"
   port     = 3000
   protocol = "HTTP"
   vpc_id   = var.vpc_id
